@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Decentralized Auction dApp</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.2/ethers.umd.min.js"></script>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Navbar -->
+    <header class="header">
+      <div class="brand">
+        <span class="icon">🔨</span>
+        <div>
+          <h1>Simple Auction dApp</h1>
+          <p class="subtitle">Decentralized Bidding on Ethereum | Pull-over-Push Security</p>
+        </div>
+      </div>
+      <div class="wallet-bar">
+        <button id="connectBtn" class="btn btn-primary">Connect MetaMask</button>
+        <span id="accountBadge" class="badge">Not Connected</span>
+      </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <div class="grid">
+      
+      <!-- Auction Item Card -->
+      <section class="card item-card">
+        <div class="card-tag">LIVE AUCTION</div>
+        <h2 id="itemTitle">Rare Digital Artwork #101</h2>
+        <p class="item-desc">Smart contract verified English auction. Bids are locked in contract escrow until outbid or finalized.</p>
+        
+        <div class="bid-stats">
+          <div class="stat-box">
+            <span class="stat-label">Starting Reserve Price</span>
+            <span class="stat-value" id="startingPriceDisplay">0.500 ETH</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Current Highest Bid</span>
+            <span class="stat-value" id="highestBidDisplay">No bids yet</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Highest Bidder</span>
+            <span class="stat-value small-address" id="highestBidderDisplay">None</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Status</span>
+            <span class="stat-value status-active" id="auctionStatus">Active</span>
+          </div>
+        </div>
+
+        <!-- Place Bid Section -->
+        <div class="action-box">
+          <h3>Place Your Bid</h3>
+          <p class="action-hint">Rules: Must be ≥ Starting Price (0.500 ETH), strictly positive, and higher than previous bid.</p>
+          <div class="input-group">
+            <input type="number" id="bidAmountInput" placeholder="Amount in ETH (min 0.5)" step="0.001" min="0.5" />
+            <button id="placeBidBtn" class="btn btn-action">Submit Bid</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sidebar: Refunds & Settlement -->
+      <aside class="sidebar">
+        
+        <!-- Refund Card -->
+        <div class="card refund-card">
+          <div class="card-header">
+            <h3>💸 Outbid Refund Vault</h3>
+          </div>
+          <p class="card-text">If someone outbids you, your ETH is safely credited here for zero-loss withdrawal.</p>
+          <div class="refund-stat">
+            <span class="stat-label">Your Available Refund:</span>
+            <span class="stat-value" id="myRefundDisplay">0.000 ETH</span>
+          </div>
+          <button id="withdrawBtn" class="btn btn-refund" disabled>Withdraw Refund</button>
+        </div>
+
+        <!-- Auction Finalize Card -->
+        <div class="card finalize-card">
+          <div class="card-header">
+            <h3>🏁 Auction Settlement</h3>
+          </div>
+          <p class="card-text">Strict Access Control: Only the auction seller can settle this auction once duration expires.</p>
+          <button id="endAuctionBtn" class="btn btn-secondary">Finalize Auction (Seller Only)</button>
+          <div id="winnerAnnouncement" class="winner-box"></div>
+        </div>
+
+        <!-- Live Activity Log -->
+        <div class="card log-card">
+          <div class="card-header">
+            <h3>📜 Live On-Chain Activity</h3>
+            <button id="clearLogBtn" class="btn-text">Clear</button>
+          </div>
+          <div id="activityLog" class="log-stream">
+            <div class="log-item system">[SYSTEM] Auction smart contract initialized.</div>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
+    <!-- Smart Contract Endpoints Explorer Box -->
+    <section class="card endpoints-card">
+      <div class="card-header">
+        <h3>🔍 Smart Contract On-Chain Endpoints Explorer (ABI Verification)</h3>
+        <span class="badge">EVM Deployed</span>
+      </div>
+      <p class="card-text">Complete list of verified smart contract functions callable via RPC & MetaMask:</p>
+
+      <div class="endpoints-grid">
+        <div class="endpoint-item write">
+          <span class="method write">WRITE (TRANSACTION)</span>
+          <code>bid() payable</code>
+          <p>Strict rules: msg.value &gt; 0, msg.value &gt;= startingPrice, and msg.value &gt; highestBid.</p>
+        </div>
+
+        <div class="endpoint-item write">
+          <span class="method write">WRITE (TRANSACTION)</span>
+          <code>withdraw() returns (bool)</code>
+          <p>Outbid users withdraw their previous bids. Implements Pull-over-Push security.</p>
+        </div>
+
+        <div class="endpoint-item write">
+          <span class="method write-seller">WRITE (SELLER ONLY)</span>
+          <code>auctionEnd() onlySeller</code>
+          <p>Transfers winning bid ETH to seller and finalizes auction state.</p>
+        </div>
+
+        <div class="endpoint-item read">
+          <span class="method read">READ (FREE VIEW)</span>
+          <code>startingPrice() returns (uint256)</code>
+          <p>Returns the minimum initial reserve price set by the seller.</p>
+        </div>
+
+        <div class="endpoint-item read">
+          <span class="method read">READ (FREE VIEW)</span>
+          <code>highestBid() returns (uint256)</code>
+          <p>Returns current winning bid in Wei.</p>
+        </div>
+
+        <div class="endpoint-item read">
+          <span class="method read">READ (FREE VIEW)</span>
+          <code>highestBidder() returns (address)</code>
+          <p>Returns Ethereum address of the highest bidder.</p>
+        </div>
+
+        <div class="endpoint-item read">
+          <span class="method read">READ (FREE VIEW)</span>
+          <code>pendingReturns(address) returns (uint256)</code>
+          <p>Returns the refundable ETH balance stored for any specific wallet.</p>
+        </div>
+
+        <div class="endpoint-item read">
+          <span class="method read">READ (FREE VIEW)</span>
+          <code>beneficiary() returns (address)</code>
+          <p>Returns seller address entitled to final payout.</p>
+        </div>
+
+        <div class="endpoint-item read">
+          <span class="method read">READ (FREE VIEW)</span>
+          <code>ended() returns (bool)</code>
+          <p>Boolean flag indicating whether the auction has concluded.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Minimal Footer -->
+    <footer class="footer">
+      <div class="team-info">
+        <strong>Academic Project:</strong> Rahul Kumar & Shubham Yadav | <span>Simple Auction dApp (Solidity + Ethers.js)</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

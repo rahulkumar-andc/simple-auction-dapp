@@ -1,0 +1,17 @@
+{
+  "name": "simple-auction-dapp",
+  "version": "1.0.0",
+  "description": "A clean, minimalist, and secure Decentralized English Auction system built with Solidity, Ethers.js, and Remix IDE.",
+  "main": "index.js",
+  "scripts": {
+    "test": "hardhat test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.2",
+    "hardhat": "^2.29.1"
+  }
+}

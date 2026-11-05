@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Hardhat build & cache
+artifacts/
+cache/
+typechain/
+typechain-types/
+
+# Presentation & Binaries
+*.pdf
+*.pptx
+*.zip
+
+# Environment & Secrets
+.env
+.env.*
+*.log
+test-query.js
+make_auction_presentation.py
