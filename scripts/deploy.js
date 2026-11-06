@@ -22,15 +22,17 @@ async function main() {
   console.log("Beneficiary (Seller):", deployer.address);
   console.log("--------------------------------------------------");
 
-  // Automatically update frontend/app.js with deployed contract address
+  // Automatically update frontend/app.js and frontend/admin.js with deployed contract address
   const fs = require("fs");
   const path = require("path");
-  const appJsPath = path.join(__dirname, "../frontend/app.js");
-  if (fs.existsSync(appJsPath)) {
-    let content = fs.readFileSync(appJsPath, "utf8");
-    content = content.replace(/const CONTRACT_ADDRESS = "0x[a-fA-F0-9]+";/, `const CONTRACT_ADDRESS = "${address}";`);
-    fs.writeFileSync(appJsPath, content, "utf8");
-    console.log("[Auto-Sync] Updated frontend/app.js with CONTRACT_ADDRESS:", address);
+  for (const file of ["app.js", "admin.js"]) {
+    const targetPath = path.join(__dirname, "../frontend", file);
+    if (fs.existsSync(targetPath)) {
+      let content = fs.readFileSync(targetPath, "utf8");
+      content = content.replace(/const CONTRACT_ADDRESS = "0x[a-fA-F0-9]+";/, `const CONTRACT_ADDRESS = "${address}";`);
+      fs.writeFileSync(targetPath, content, "utf8");
+      console.log(`[Auto-Sync] Updated frontend/${file} with CONTRACT_ADDRESS:`, address);
+    }
   }
 }
 

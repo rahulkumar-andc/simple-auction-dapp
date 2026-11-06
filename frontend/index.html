@@ -21,6 +21,7 @@
         </div>
       </div>
       <div class="wallet-bar">
+        <a href="admin.html" class="btn btn-secondary" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:12px; padding:7px 12px; width:auto;">🔒 Admin Portal</a>
         <button id="connectBtn" class="btn btn-primary">Connect MetaMask</button>
         <span id="accountBadge" class="badge">Not Connected</span>
       </div>
@@ -87,6 +88,9 @@
             <h3>🏁 Auction Settlement</h3>
           </div>
           <p class="card-text">Strict Access Control: Only the auction seller can settle this auction once duration expires.</p>
+          <div id="sellerStatusAlert" style="background:#fef3c7; color:#92400e; border:1px solid #fde68a; padding:8px 12px; border-radius:6px; font-size:12px; margin-bottom:12px; font-weight:600;">
+            ⚠️ Connect seller wallet to finalize auction.
+          </div>
           <button id="endAuctionBtn" class="btn btn-secondary">Finalize Auction (Seller Only)</button>
           <div id="winnerAnnouncement" class="winner-box"></div>
         </div>

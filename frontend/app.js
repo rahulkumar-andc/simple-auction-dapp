@@ -123,6 +123,27 @@ async function syncBlockchainData() {
       myRefundDisplay.textContent = "0.0000 ETH";
       withdrawBtn.disabled = true;
     }
+
+    // Dynamic seller status alert in sidebar
+    const sellerStatusAlert = document.getElementById("sellerStatusAlert");
+    if (sellerStatusAlert) {
+      if (!userAddress) {
+        sellerStatusAlert.style.background = "#fef3c7";
+        sellerStatusAlert.style.color = "#92400e";
+        sellerStatusAlert.style.borderColor = "#fde68a";
+        sellerStatusAlert.innerHTML = "⚠️ Connect seller wallet to finalize auction.";
+      } else if (userAddress.toLowerCase() === sellerAddress?.toLowerCase()) {
+        sellerStatusAlert.style.background = "#dcfce7";
+        sellerStatusAlert.style.color = "#166534";
+        sellerStatusAlert.style.borderColor = "#bbf7d0";
+        sellerStatusAlert.innerHTML = `✅ <strong>Seller Verified:</strong> You can finalize & withdraw.`;
+      } else {
+        sellerStatusAlert.style.background = "#f1f5f9";
+        sellerStatusAlert.style.color = "#64748b";
+        sellerStatusAlert.style.borderColor = "#e2e8f0";
+        sellerStatusAlert.innerHTML = `🔒 <strong>Bidder Mode:</strong> Only seller can settle.`;
+      }
+    }
   } catch (e) {
     console.error("Dynamic sync error:", e);
   }
