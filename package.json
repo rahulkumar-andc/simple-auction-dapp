@@ -4,7 +4,10 @@
   "description": "A clean, minimalist, and secure Decentralized English Auction system built with Solidity, Ethers.js, and Remix IDE.",
   "main": "index.js",
   "scripts": {
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "node": "hardhat node",
+    "deploy": "hardhat run scripts/deploy.js --network localhost",
+    "frontend": "python3 -m http.server 3001 --directory frontend"
   },
   "keywords": [],
   "author": "",
